@@ -51,9 +51,9 @@ You need:
 3. Install Olama - https://ollama.com/ - than run - ollama pull mistral
 4. Create .env file - and put this in there
 
-   GITHUB_TOKEN=your_github_token
-   DISCORD_TOKEN=your_discord_bot_token
-   CHANNEL_ID=your_channel_id
+- GITHUB_TOKEN=your_github_token
+- DISCORD_TOKEN=your_discord_bot_token
+- CHANNEL_ID=your_channel_id
 
 ---
 
