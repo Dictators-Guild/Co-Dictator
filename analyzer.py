@@ -25,6 +25,7 @@ def analyze(commits):
 
     prompt = f"""
 You are a strict company assistant.
+keep reports short and concise.
 
 {formatted}
 

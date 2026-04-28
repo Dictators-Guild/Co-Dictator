@@ -61,15 +61,23 @@ def get_all_commits():
 
             diff = analyze_diff(details)
 
+            author = None
+
+            if c.get("author") and c["author"].get("login"):
+
+                author = c["author"]["login"]
+            else:
+                author = c["commit"]["author"]["name"]  # fallback
+
             all_commits.append({
                 "id": c["sha"],
                 "repo": repo,
-                "author": c["commit"]["author"]["name"],
+                "author": author,
                 "message": c["commit"]["message"],
                 "date": c["commit"]["author"]["date"],
                 "files": diff["files_changed"],
                 "additions": diff["additions"],
                 "deletions": diff["deletions"]
-            })
+                })
 
     return all_commits
