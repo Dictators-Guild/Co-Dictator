@@ -59,7 +59,7 @@ You need:
 
 # Important notes
 
-1. First run may process a lot of commits
-2. After that, it only tracks new ones
-3. AI analysis is not 100% accurate (it’s heuristic)
-4. GitHub API has rate limits
+- First run may process a lot of commits
+- After that, it only tracks new ones
+- AI analysis is not 100% accurate (it’s heuristic)
+- GitHub API has rate limits
