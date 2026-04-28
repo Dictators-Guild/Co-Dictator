@@ -5,9 +5,9 @@ I built it with ChatGPT step by step, without prior experience in Python.
 
 The goal is simple:
 
-👉 Monitor GitHub activity  
-👉 Analyze commits using local AI  
-👉 Send reports to Discord  
+- Monitor GitHub activity  
+- Analyze commits using local AI  
+- Send reports to Discord  
 
 ---
 
@@ -44,7 +44,7 @@ You need:
 
 ---
 
-# 🔧 Installation
+# Installation
 
 1. Clone project
 2. Install Python dependencies - pip install requests python-dotenv ollama
@@ -57,7 +57,7 @@ You need:
 
 ---
 
-# ⚠️ Important notes
+# Important notes
 
 1. First run may process a lot of commits
 2. After that, it only tracks new ones
