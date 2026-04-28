@@ -1,7 +1,7 @@
 # AI - Developer Monitor
 
 This is my first serious AI project.  
-I built it with ChatGPT step by step, without prior experience in Python or backend systems.
+I built it with ChatGPT step by step, without prior experience in Python.
 
 The goal is simple:
 
@@ -46,4 +46,20 @@ You need:
 
 # 🔧 Installation
 
-## 1. Clone project
+1. Clone project
+2. Install Python dependencies - pip install requests python-dotenv ollama
+3. Install Olama - https://ollama.com/ - than run - ollama pull mistral
+4. Create .env file - and put this in there
+
+   GITHUB_TOKEN=your_github_token
+   DISCORD_TOKEN=your_discord_bot_token
+   CHANNEL_ID=your_channel_id
+
+---
+
+# ⚠️ Important notes
+
+1. First run may process a lot of commits
+2. After that, it only tracks new ones
+3. AI analysis is not 100% accurate (it’s heuristic)
+4. GitHub API has rate limits
