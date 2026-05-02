@@ -38,12 +38,14 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
 
+          # Make sure we are up to date FIRST
+          git pull origin main
+
+          # Now stage changes
           git add seen.json
 
-          # pull latest changes FIRST
-          git pull --rebase origin main
-
-          # commit AFTER syncing
+          # Commit only if changes exist
           git commit -m "Update seen commits" || exit 0
 
+          # Push safely
           git push origin main
