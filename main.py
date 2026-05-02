@@ -1,14 +1,13 @@
-import time
 from github_api import get_all_commits
 from analyzer import analyze
 from discord_bot import send_to_discord
 from storage import load_seen, save_seen
-from config import CHECK_INTERVAL
 
-seen_commits = load_seen()
 
-while True:
+def main():
     print("Checking commits...")
+
+    seen_commits = load_seen()
 
     commits = get_all_commits()
     new_commits = []
@@ -29,4 +28,6 @@ while True:
     else:
         print("No new commits")
 
-    time.sleep(CHECK_INTERVAL)
+
+if __name__ == "__main__":
+    main()

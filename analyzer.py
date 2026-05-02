@@ -1,52 +1,44 @@
-import ollama
 from utils import group_by_developer, get_last_activity, get_inactive_devs
 from config import INACTIVE_THRESHOLD
+
 
 def analyze(commits):
     grouped = group_by_developer(commits)
     last_activity = get_last_activity(commits)
     inactive = get_inactive_devs(last_activity, INACTIVE_THRESHOLD)
 
-    formatted = ""
+    report = "Developer Activity Report\n"
+    report += "=" * 30 + "\n"
+
+    total_commits = 0
+    most_active_dev = None
+    most_active_count = 0
+
     for dev, dev_commits in grouped.items():
-        formatted += f"\n{dev} ({len(dev_commits)} commits):\n"
+        commit_count = len(dev_commits)
+        total_commits += commit_count
+
+        if commit_count > most_active_count:
+            most_active_count = commit_count
+            most_active_dev = dev
+
+        report += f"\n{dev} ({commit_count} commits)\n"
 
         for c in dev_commits:
-            formatted += (
+            report += (
                 f"- [{c['repo']}] {c['message']} "
                 f"(files: {c['files']}, +{c['additions']} / -{c['deletions']})\n"
             )
 
-    inactive_text = ""
     if inactive:
-        inactive_text = "\nInactive developers:\n"
+        report += "\nInactive developers:\n"
         for dev, minutes in inactive:
-            inactive_text += f"- {dev}: {minutes} min\n"
+            report += f"- {dev}: {minutes} min inactive\n"
 
-    prompt = f"""
-You are a strict company assistant.
-keep reports short and concise.
+    report += "\nTeam Summary:\n"
+    report += f"- Total commits: {total_commits}\n"
 
-{formatted}
+    if most_active_dev:
+        report += f"- Most active: {most_active_dev}\n"
 
-{inactive_text}
-
-Analyze developers:
-- summarize work
-- rate activity
-- flag suspicious commits
-
-Then:
-- team summary
-- most active
-- who needs attention
-
-Be direct.
-"""
-
-    response = ollama.chat(
-        model="mistral",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response["message"]["content"]
+    return report

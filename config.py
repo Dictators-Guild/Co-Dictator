@@ -3,9 +3,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+GITHUB_TOKEN = os.getenv("GH_TOKEN_CUSTOM")
+DISCORD_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_ID"))
 
 GITHUB_HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}"
