@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    concurrency:
+      group: commit-bot
+      cancel-in-progress: true
 
     permissions:
       contents: write
@@ -38,15 +41,8 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
 
-          # STEP 1: sync repo FIRST
-          git fetch origin main
-          git reset --hard origin/main
-
-          # STEP 2: run bot already modified seen.json
           git add seen.json
 
-          # STEP 3: commit only if changes exist
           git commit -m "Update seen commits" || exit 0
 
-          # STEP 4: push safely
-          git push origin main
+          git push origin HEAD:main
