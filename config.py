@@ -21,6 +21,6 @@ GITHUB_HEADERS = {
     "X-GitHub-Api-Version": "2022-11-28",
 }
 
-DB_PATH = os.getenv("DB_PATH", "/data/codictator.db")
+DB_PATH = os.getenv("DB_PATH", "codictator.db")
 CHECK_INTERVAL = int(os.getenv("CHECK_INTERVAL", "300"))
 INACTIVE_THRESHOLD = int(os.getenv("INACTIVE_THRESHOLD", "1440"))

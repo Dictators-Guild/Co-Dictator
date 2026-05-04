@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Iterable
 
-from db import connect
+from db import connect, dict_rows
 
 
 def has_seen(sha: str) -> bool:
@@ -16,10 +16,10 @@ def filter_unseen(shas: Iterable[str]) -> set[str]:
         return set()
     with connect() as conn:
         placeholders = ",".join("?" * len(shas))
-        rows = conn.execute(
+        cur = conn.execute(
             f"SELECT sha FROM commits WHERE sha IN ({placeholders})", shas
-        ).fetchall()
-        seen = {r["sha"] for r in rows}
+        )
+        seen = {r["sha"] for r in dict_rows(cur)}
         return set(shas) - seen
 
 
@@ -40,9 +40,10 @@ def record_commits(commits: list[dict]) -> int:
 
 def last_activity_per_dev() -> dict[str, datetime]:
     with connect() as conn:
-        rows = conn.execute(
+        cur = conn.execute(
             "SELECT author, MAX(committed_at) AS last FROM commits GROUP BY author"
-        ).fetchall()
+        )
+        rows = dict_rows(cur)
     return {
         r["author"]: datetime.fromisoformat(r["last"].replace("Z", "+00:00"))
         for r in rows

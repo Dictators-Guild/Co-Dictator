@@ -25,18 +25,17 @@ The goal is simple:
 
 1. Fetch repos from GitHub
 2. Pull latest commits and diffs
-3. Save them in SQLite so we don't re-report the same ones
-4. AI looks at each developer's commits (optional, skipped if Ollama is down)
+3. Save them in SQLite (synced to Turso in production)
+4. AI looks at each developer's commits
 5. Post the report to Discord
 6. Repeat every `CHECK_INTERVAL` seconds
 
-The bot lives on Fly.io. Ollama runs separately (e.g. on a laptop) and the bot
-talks to it over HTTP. If Ollama is unreachable, the report still goes out
-without the AI section.
+The bot runs on Koyeb. Ollama runs on a laptop and the bot talks to it over
+HTTP. If Ollama is unreachable, the report still goes out without the AI part.
 
 ---
 
-# Run it locally
+# Run it
 
 ```bash
 pip install -r requirements.txt
@@ -45,34 +44,7 @@ ollama pull llama3.2:3b
 python main.py
 ```
 
-# Deploy to Fly
-
-```bash
-fly launch --no-deploy --copy-config
-fly volumes create codictator_data --size 1
-fly secrets set GH_TOKEN_CUSTOM=... DISCORD_BOT_TOKEN=... DISCORD_CHANNEL_ID=...
-fly deploy
-```
-
-# Hosting Ollama (on a laptop, free)
-
-On the machine that will run Ollama:
-
-```bash
-brew install ollama cloudflared        # or platform equivalents
-ollama pull llama3.2:3b
-ollama serve                            # leave running
-cloudflared tunnel --url http://localhost:11434
-```
-
-`cloudflared` prints a `https://*.trycloudflare.com` URL. Point the bot at it:
-
-```bash
-fly secrets set OLLAMA_URL=https://your-tunnel.trycloudflare.com
-```
-
-The URL changes each time `cloudflared` restarts — for a stable URL, sign up
-for a free Cloudflare account and use a named tunnel.
+For deployment notes (Koyeb + Turso + Ollama tunnel), see `.env.example`.
 
 ---
 

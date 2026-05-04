@@ -1,8 +1,13 @@
-import sqlite3
+import os
 from contextlib import contextmanager
 from pathlib import Path
 
+import libsql_experimental as libsql
+
 from config import DB_PATH
+
+TURSO_URL = os.getenv("TURSO_DB_URL")
+TURSO_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS commits (
@@ -28,20 +33,41 @@ CREATE TABLE IF NOT EXISTS run_log (
 """
 
 
+def _make_connection():
+    parent = Path(DB_PATH).parent
+    if str(parent) not in ("", "."):
+        parent.mkdir(parents=True, exist_ok=True)
+
+    if TURSO_URL:
+        return libsql.connect(DB_PATH, sync_url=TURSO_URL, auth_token=TURSO_TOKEN)
+    return libsql.connect(DB_PATH)
+
+
 def init_db() -> None:
-    Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
     with connect() as conn:
-        conn.executescript(SCHEMA)
+        for stmt in filter(None, (s.strip() for s in SCHEMA.split(";"))):
+            conn.execute(stmt)
+        conn.commit()
+
+
+def _safe_sync(conn) -> None:
+    try:
+        conn.sync()
+    except Exception:
+        pass
 
 
 @contextmanager
 def connect():
-    conn = sqlite3.connect(DB_PATH, isolation_level=None, timeout=30.0)
-    try:
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA foreign_keys=ON")
-        conn.execute("PRAGMA synchronous=NORMAL")
-        yield conn
-    finally:
-        conn.close()
+    conn = _make_connection()
+    if TURSO_URL:
+        _safe_sync(conn)
+    yield conn
+    conn.commit()
+    if TURSO_URL:
+        _safe_sync(conn)
+
+
+def dict_rows(cursor) -> list[dict]:
+    cols = [d[0] for d in cursor.description] if cursor.description else []
+    return [dict(zip(cols, row)) for row in cursor.fetchall()]

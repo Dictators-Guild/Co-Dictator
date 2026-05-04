@@ -12,8 +12,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN useradd --create-home --uid 1000 app && \
-    mkdir -p /data && chown -R app:app /data /app
+RUN useradd --create-home --uid 1000 app && chown -R app:app /app
 USER app
 
 CMD ["python", "main.py"]
