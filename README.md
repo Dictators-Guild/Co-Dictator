@@ -42,7 +42,7 @@ If Ollama is unreachable, the report still goes out without the AI part.
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env   # fill in tokens
+cp .env.example .env
 ollama pull llama3.2:3b
 python main.py
 ```
@@ -56,4 +56,4 @@ For deployment, push to GitHub then point Render at the repo (it picks up
 # Notes
 
 - AI analysis is not 100% accurate
-- GitHub API has rate limits — the bot skips a cycle when hit
+- GitHub API has rate limits - the bot skips a cycle when hit
