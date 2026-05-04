@@ -1,0 +1,24 @@
+app = "co-dictator"
+primary_region = "iad"
+
+[build]
+
+[env]
+  DB_PATH = "/data/codictator.db"
+  CHECK_INTERVAL = "300"
+  OLLAMA_ENABLED = "true"
+  OLLAMA_MODEL = "llama3.2:3b"
+  OLLAMA_URL = "http://127.0.0.1:11434"
+  OLLAMA_MODELS = "/data/ollama-models"
+
+[mounts]
+  source = "codictator_data"
+  destination = "/data"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 2
+  memory_mb = 4096
+
+[deploy]
+  strategy = "immediate"

@@ -1,65 +1,60 @@
 # AI - Developer Monitor
 
-This is my first serious AI project.  
+This is my first serious AI project.
 I built it with ChatGPT step by step, without prior experience in Python.
 
 The goal is simple:
 
-- Monitor GitHub activity  
-- Analyze commits using local AI  
-- Send reports to Discord  
+- Monitor GitHub activity
+- Analyze commits using local AI
+- Send reports to Discord
 
 ---
 
 # What it does
 
-- Tracks commits across all repositories I have access to
-- Works with private + public repos
-- Uses local AI (Ollama + Mistral) to analyze work
+- Tracks commits across all repos I have access to (private + public)
+- Uses local AI (Ollama + llama3.2:3b) to analyze work
 - Groups commits per developer
 - Detects inactive developers
-- Checks if commit messages match actual code changes
-- Sends clean reports to Discord channel
+- Sends reports to a Discord channel
 
 ---
 
 # How it works
 
-1. Fetch repositories from GitHub API  
-2. Pull latest commits  
-3. Get commit diffs (files changed, lines added/deleted)  
-4. Analyze everything using AI  
-5. Send report to Discord  
-6. Repeat every X seconds  
+1. Fetch repos from GitHub
+2. Pull latest commits and diffs
+3. Save them in SQLite so we don't re-report the same ones
+4. AI looks at each developer's commits
+5. Post the report to Discord
+6. Repeat every `CHECK_INTERVAL` seconds
 
 ---
 
-# Requirements
+# Run it locally
 
-You need:
+```bash
+pip install -r requirements.txt
+cp .env.example .env   # fill in tokens
+ollama pull llama3.2:3b
+python main.py
+```
 
-- Python 3.10+
-- Git
-- Ollama installed
+# Deploy to Fly
+
+```bash
+fly launch --no-deploy --copy-config
+fly volumes create codictator_data --size 5
+fly secrets set GH_TOKEN_CUSTOM=... DISCORD_BOT_TOKEN=... DISCORD_CHANNEL_ID=...
+fly deploy
+```
+
+First boot pulls the model onto the volume. After that, restarts are fast.
 
 ---
 
-# Installation
+# Notes
 
-1. Clone project
-2. Install Python dependencies - pip install requests python-dotenv ollama
-3. Install Olama - https://ollama.com/ - than run - ollama pull mistral
-4. Create .env file - and put this in there
-
-- GITHUB_TOKEN=your_github_token
-- DISCORD_TOKEN=your_discord_bot_token
-- CHANNEL_ID=your_channel_id
-
----
-
-# Important notes
-
-- First run may process a lot of commits
-- After that, it only tracks new ones
-- AI analysis is not 100% accurate (it’s heuristic)
-- GitHub API has rate limits
+- AI analysis is not 100% accurate
+- GitHub API has rate limits — the bot skips a cycle when hit
