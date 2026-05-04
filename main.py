@@ -7,6 +7,7 @@ from config import CHECK_INTERVAL
 from db import init_db
 from discord_bot import send_to_discord
 from github_api import get_all_commits
+from health import start_health_server
 from storage import filter_unseen, log_run, record_commits, utc_now
 
 logging.basicConfig(
@@ -52,6 +53,7 @@ def main() -> None:
     signal.signal(signal.SIGINT, _stop)
 
     init_db()
+    start_health_server()
     log.info("Co-Dictator starting, interval=%ds", CHECK_INTERVAL)
 
     while _running:

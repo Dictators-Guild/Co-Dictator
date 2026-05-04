@@ -30,8 +30,11 @@ The goal is simple:
 5. Post the report to Discord
 6. Repeat every `CHECK_INTERVAL` seconds
 
-The bot runs on Koyeb. Ollama runs on a laptop and the bot talks to it over
-HTTP. If Ollama is unreachable, the report still goes out without the AI part.
+The bot runs on Render's free Web Service tier. It exposes a tiny `/` health
+endpoint so Render keeps it running. Render free spins down after 15 min of
+no traffic, so point UptimeRobot (or similar) at the service URL every 10 min
+to keep it warm. Ollama runs on a laptop and the bot talks to it over HTTP.
+If Ollama is unreachable, the report still goes out without the AI part.
 
 ---
 
@@ -44,7 +47,9 @@ ollama pull llama3.2:3b
 python main.py
 ```
 
-For deployment notes (Koyeb + Turso + Ollama tunnel), see `.env.example`.
+For deployment, push to GitHub then point Render at the repo (it picks up
+`render.yaml` and `Dockerfile` automatically). Set the env vars listed in
+`.env.example` as Render secrets.
 
 ---
 

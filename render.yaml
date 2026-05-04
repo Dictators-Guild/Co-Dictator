@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: co-dictator
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: GH_TOKEN_CUSTOM
+        sync: false
+      - key: DISCORD_BOT_TOKEN
+        sync: false
+      - key: DISCORD_CHANNEL_ID
+        sync: false
+      - key: TURSO_DB_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: OLLAMA_URL
+        sync: false
+      - key: OLLAMA_ENABLED
+        value: "true"
+      - key: CHECK_INTERVAL
+        value: "300"
