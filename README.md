@@ -32,7 +32,7 @@ The goal is simple:
 
 The bot runs on Render's free Web Service tier. It exposes a tiny `/` health
 endpoint so Render keeps it running. Render free spins down after 15 min of
-no traffic, so point UptimeRobot (or similar) at the service URL every 10 min
+no traffic, so point UptimeRobot (or similar) at the service URL every 14 min
 to keep it warm. Ollama runs on a laptop and the bot talks to it over HTTP.
 If Ollama is unreachable, the report still goes out without the AI part.
 
