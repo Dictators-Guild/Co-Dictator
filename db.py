@@ -1,10 +1,12 @@
+import logging
 import os
-from contextlib import contextmanager
 from pathlib import Path
 
 import libsql_experimental as libsql
 
 from config import DB_PATH
+
+log = logging.getLogger(__name__)
 
 TURSO_URL = os.getenv("TURSO_DB_URL")
 TURSO_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
@@ -32,40 +34,44 @@ CREATE TABLE IF NOT EXISTS run_log (
 );
 """
 
+_conn = None
 
-def _make_connection():
+
+def _build_connection():
     parent = Path(DB_PATH).parent
     if str(parent) not in ("", "."):
         parent.mkdir(parents=True, exist_ok=True)
 
     if TURSO_URL:
+        log.info("Connecting to Turso (%s) with local replica at %s", TURSO_URL, DB_PATH)
         return libsql.connect(DB_PATH, sync_url=TURSO_URL, auth_token=TURSO_TOKEN)
+    log.info("Connecting to local SQLite at %s", DB_PATH)
     return libsql.connect(DB_PATH)
 
 
+def get_conn():
+    global _conn
+    if _conn is None:
+        _conn = _build_connection()
+        if TURSO_URL:
+            _conn.sync()
+    return _conn
+
+
 def init_db() -> None:
-    with connect() as conn:
-        for stmt in filter(None, (s.strip() for s in SCHEMA.split(";"))):
-            conn.execute(stmt)
-        conn.commit()
-
-
-def _safe_sync(conn) -> None:
-    try:
-        conn.sync()
-    except Exception:
-        pass
-
-
-@contextmanager
-def connect():
-    conn = _make_connection()
-    if TURSO_URL:
-        _safe_sync(conn)
-    yield conn
+    conn = get_conn()
+    for stmt in filter(None, (s.strip() for s in SCHEMA.split(";"))):
+        conn.execute(stmt)
     conn.commit()
     if TURSO_URL:
-        _safe_sync(conn)
+        conn.sync()
+
+
+def commit_and_sync() -> None:
+    conn = get_conn()
+    conn.commit()
+    if TURSO_URL:
+        conn.sync()
 
 
 def dict_rows(cursor) -> list[dict]:
