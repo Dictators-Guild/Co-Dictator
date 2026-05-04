@@ -7,9 +7,7 @@ primary_region = "iad"
   DB_PATH = "/data/codictator.db"
   CHECK_INTERVAL = "300"
   OLLAMA_ENABLED = "true"
-  OLLAMA_MODEL = "llama3.2:3b"
-  OLLAMA_URL = "http://127.0.0.1:11434"
-  OLLAMA_MODELS = "/data/ollama-models"
+  # OLLAMA_URL set via `fly secrets set OLLAMA_URL=https://...`
 
 [mounts]
   source = "codictator_data"
@@ -17,8 +15,8 @@ primary_region = "iad"
 
 [[vm]]
   cpu_kind = "shared"
-  cpus = 2
-  memory_mb = 4096
+  cpus = 1
+  memory_mb = 256
 
 [deploy]
   strategy = "immediate"

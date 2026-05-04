@@ -7,23 +7,13 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        curl ca-certificates \
-    && curl -fsSL https://ollama.com/install.sh | sh \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
-
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 COPY . .
 
 RUN useradd --create-home --uid 1000 app && \
-    mkdir -p /data /home/app/.ollama && \
-    chown -R app:app /data /app /home/app/.ollama
+    mkdir -p /data && chown -R app:app /data /app
 USER app
 
-ENV OLLAMA_HOST=0.0.0.0:11434 \
-    OLLAMA_MODELS=/data/ollama-models
-
-CMD ["/app/entrypoint.sh"]
+CMD ["python", "main.py"]
