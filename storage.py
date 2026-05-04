@@ -17,7 +17,7 @@ def filter_unseen(shas: Iterable[str]) -> set[str]:
     with connect() as conn:
         placeholders = ",".join("?" * len(shas))
         cur = conn.execute(
-            f"SELECT sha FROM commits WHERE sha IN ({placeholders})", shas
+            f"SELECT sha FROM commits WHERE sha IN ({placeholders})", tuple(shas)
         )
         seen = {r["sha"] for r in dict_rows(cur)}
         return set(shas) - seen
