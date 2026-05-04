@@ -26,14 +26,21 @@ def filter_unseen(shas: Iterable[str]) -> set[str]:
 def record_commits(commits: list[dict]) -> int:
     if not commits:
         return 0
+    rows = [
+        (
+            c["id"], c["repo"], c["author"], c["message"], c["date"],
+            c["files"], c["additions"], c["deletions"],
+        )
+        for c in commits
+    ]
     with connect() as conn:
         cur = conn.executemany(
             """
             INSERT OR IGNORE INTO commits
                 (sha, repo, author, message, committed_at, files, additions, deletions)
-            VALUES (:id, :repo, :author, :message, :date, :files, :additions, :deletions)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            commits,
+            rows,
         )
         return cur.rowcount or 0
 
